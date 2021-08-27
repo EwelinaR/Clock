@@ -18,7 +18,6 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(ClockViewModel::class.java)
         initScreen()
         initTime()
-        viewModel.runClock()
     }
 
     private fun initScreen() {

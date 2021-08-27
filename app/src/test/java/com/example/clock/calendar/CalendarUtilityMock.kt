@@ -10,6 +10,10 @@ class CalendarUtilityMock(private var hour: Int, private var minute: Int): Calen
         return minute
     }
 
+    override fun getSecond(): Int {
+        return 0
+    }
+
     fun setHour(hour: Int) {
         this.hour = hour
     }

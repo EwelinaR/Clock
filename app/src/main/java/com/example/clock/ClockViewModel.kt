@@ -1,12 +1,9 @@
 package com.example.clock
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.clock.calendar.CalendarUtility
 import com.example.clock.calendar.CalendarUtilityInterface
-import java.util.Calendar
-import java.util.TimeZone
 import java.util.Timer
 import java.util.TimerTask
 
@@ -23,15 +20,18 @@ class ClockViewModel(calendarUtility: CalendarUtilityInterface = CalendarUtility
 
         tensOfMinute.postValue(calendar.getTensOfMinute())
         unitsOfMinute.postValue(calendar.getUnitsOfMinute())
+
+        val delay = 60_000L - calendarUtility.getSecond() * 1000
+        runClock(delay)
     }
 
-    fun runClock() {
+    private fun runClock(delay: Long) {
         val myTimer = Timer()
         myTimer.schedule(object : TimerTask() {
             override fun run() {
                 updateTime()
             }
-        }, 0, 1000*60) // TODO adjust delay
+        }, delay, 60_000)
     }
 
     fun updateTime() {

@@ -13,6 +13,10 @@ class CalendarUtility : CalendarUtilityInterface {
         return getCalendarInstance().get(Calendar.MINUTE)
     }
 
+    override fun getSecond(): Int {
+        return getCalendarInstance().get(Calendar.SECOND)
+    }
+
     private fun getCalendarInstance() : Calendar {
         return Calendar.getInstance(TimeZone.getTimeZone("GMT+2"))
     }
