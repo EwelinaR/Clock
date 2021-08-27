@@ -1,24 +1,57 @@
 package com.example.clock
 
-import java.util.*
+import com.example.clock.calendar.CalendarUtilityInterface
 
-class CalendarHelper(calendar: Calendar) {
-    private var minute: Int = calendar.get(Calendar.MINUTE)
-    private var hour: Int = calendar.get(Calendar.HOUR_OF_DAY)
+class CalendarHelper(private val calendar: CalendarUtilityInterface) {
+    private var minute: Int = calendar.getMinute()
+    private var hour: Int = calendar.getHour()
+
+    fun getHour() : Int {
+        return calendar.getHour()
+    }
+
+    fun getMinute() : Int {
+        return calendar.getMinute()
+    }
 
     fun getTensOfHour() : Int {
-        return hour / 10
+        return calendar.getHour() / 10
     }
 
     fun getUnitsOfHour() : Int {
-        return hour % 10
+        return calendar.getHour() % 10
     }
 
     fun getTensOfMinute() : Int {
-        return minute / 10
+        return calendar.getMinute() / 10
     }
 
     fun getUnitsOfMinute() : Int {
-        return minute % 10
+        return calendar.getMinute() % 10
+    }
+
+    fun isUnitsOfHourOverload() : Boolean {
+        val actualHour = calendar.getHour()
+        return hour != actualHour && actualHour % 10 == 0
+    }
+
+    fun isTensOfHourOverload() : Boolean {
+        val actualHour = calendar.getHour()
+        return hour != actualHour && actualHour == 0
+    }
+
+    fun isUnitsOfMinuteOverload() : Boolean {
+        val actualMinute = calendar.getMinute()
+        return minute != actualMinute && actualMinute % 10 == 0
+    }
+
+    fun isTensOfMinuteOverload() : Boolean {
+        val actualMinute = calendar.getMinute()
+        return minute != actualMinute && actualMinute == 0
+    }
+
+    fun updateTime() {
+        hour = calendar.getHour()
+        minute = calendar.getMinute()
     }
 }

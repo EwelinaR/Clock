@@ -37,14 +37,14 @@
             android:textSize="200sp" />
 
         <TextView
-            android:id="@+id/tens_of_minutes"
+            android:id="@+id/tens_of_minute"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="2"
             android:textSize="200sp" />
 
         <TextView
-            android:id="@+id/units_of_minutes"
+            android:id="@+id/units_of_minute"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="3"
