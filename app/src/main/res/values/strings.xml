@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Clock</string>
+    <string name="colon">:</string>
+    <string name="no_digit">-</string>
 </resources>
