@@ -56,7 +56,5 @@ class ClockViewModel(calendarUtility: CalendarUtilityInterface = CalendarUtility
             return
         }
         tensOfHour.postValue(0)
-
-        calendar.updateTime()
     }
 }
