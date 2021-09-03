@@ -4,15 +4,24 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.clock.calendar.CalendarUtility
 import com.example.clock.calendar.CalendarUtilityInterface
+import com.example.clock.weather.Weather
+import com.example.clock.weather.WeatherApi
+import com.example.clock.weather.WeatherObserver
 import java.util.Timer
 import java.util.TimerTask
 
-class ClockViewModel(calendarUtility: CalendarUtilityInterface = CalendarUtility()) : ViewModel() {
+class ClockViewModel(calendarUtility: CalendarUtilityInterface = CalendarUtility()):
+    ViewModel(), WeatherObserver {
+
     val tensOfHour = MutableLiveData<Int>()
     val unitsOfHour = MutableLiveData<Int>()
     val tensOfMinute = MutableLiveData<Int>()
     val unitsOfMinute = MutableLiveData<Int>()
-    private val calendar =  CalendarHelper(calendarUtility)
+    private val calendar = CalendarHelper(calendarUtility)
+
+    val temperature = MutableLiveData<Float>()
+    val feelTemperature = MutableLiveData<Float>()
+    val weatherIcon = MutableLiveData<String>()
 
     init {
         tensOfHour.postValue(calendar.getTensOfHour())
@@ -23,6 +32,7 @@ class ClockViewModel(calendarUtility: CalendarUtilityInterface = CalendarUtility
 
         val delay = 60_000L - calendarUtility.getSecond() * 1000
         runClock(delay)
+        rutWeatherUpdate()
     }
 
     private fun runClock(delay: Long) {
@@ -31,7 +41,16 @@ class ClockViewModel(calendarUtility: CalendarUtilityInterface = CalendarUtility
             override fun run() {
                 updateTime()
             }
-        }, delay, 60_000)
+        }, delay, 60_000)   // 1min
+    }
+
+    private fun rutWeatherUpdate() {
+        val myTimer = Timer()
+        myTimer.schedule(object : TimerTask() {
+            override fun run() {
+                updateWeather()
+            }
+        }, 0, 3_000_000) // 0.5h
     }
 
     fun updateTime() {
@@ -56,5 +75,18 @@ class ClockViewModel(calendarUtility: CalendarUtilityInterface = CalendarUtility
             return
         }
         tensOfHour.postValue(0)
+    }
+
+    private fun updateWeather() {
+        val api = WeatherApi(this)
+        api.getWeather()
+    }
+
+    override fun updateWeatherValues(weather: Weather) {
+        weather.let {
+            temperature.postValue(it.temperature)
+            feelTemperature.postValue(it.feelTemperature)
+            weatherIcon.postValue(it.icon)
+        }
     }
 }
