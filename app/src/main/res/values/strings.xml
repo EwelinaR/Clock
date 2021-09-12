@@ -4,4 +4,5 @@
     <string name="no_digit">-</string>
     <string name="weather_icon">weather icon</string>
     <string name="celsius">°C</string>
+    <string name="battery">Low battery %s%%</string>
 </resources>

@@ -1,12 +1,17 @@
 package com.example.clock
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ActivityInfo
-import androidx.appcompat.app.AppCompatActivity
+import android.os.BatteryManager
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 
 class MainActivity : AppCompatActivity() {
@@ -20,6 +25,7 @@ class MainActivity : AppCompatActivity() {
         initScreen()
         initTime()
         initWeather()
+        initBatteryBroadcast()
     }
 
     private fun initScreen() {
@@ -61,5 +67,22 @@ class MainActivity : AppCompatActivity() {
             if (id == 0) id = R.drawable.no_icon
             icon.setImageResource(id)
         })
+    }
+
+    private fun initBatteryBroadcast() {
+        val batteryStatus = findViewById<TextView>(R.id.battery_warning)
+
+        val broadcast = object:  BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                intent!!.getIntExtra(BatteryManager.EXTRA_LEVEL, -1).let {
+                    batteryStatus.text = getString(R.string.battery, it.toString())
+                    if (it < 40) batteryStatus.visibility = View.VISIBLE
+                    else batteryStatus.visibility = View.INVISIBLE
+                }
+            }
+        }
+
+        val filter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+        registerReceiver(broadcast, filter)
     }
 }
