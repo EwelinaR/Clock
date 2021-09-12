@@ -106,4 +106,18 @@ class ClockViewModelTest {
         Assertions.assertEquals(0, actualMinute)
         Assertions.assertEquals(0, actualHour)
     }
+
+    @Test
+    fun updateToNewData() {
+        // arrange
+        val calendarMock = CalendarUtilityMock(0, 0, "first")
+        val clock = ClockViewModel(calendarMock)
+
+        // act
+        calendarMock.setDate("second")
+        clock.updateTime()
+
+        // assert
+        Assertions.assertEquals("second", clock.date.value)
+    }
 }

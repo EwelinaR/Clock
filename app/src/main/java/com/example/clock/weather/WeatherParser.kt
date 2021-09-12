@@ -6,7 +6,7 @@ import kotlin.math.roundToInt
 
 class WeatherParser(private val data: String) {
 
-    fun getResult(): Weather? {
+    fun getResult() : Weather? {
         try {
             val json = JSONObject(data)
 
@@ -30,7 +30,7 @@ class WeatherParser(private val data: String) {
         }
     }
 
-    private fun roundFloat(value: Float): Float {
+    private fun roundFloat(value: Float) : Float {
         return (value * 10).roundToInt().toFloat() / 10
     }
 }

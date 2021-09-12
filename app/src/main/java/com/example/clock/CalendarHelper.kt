@@ -4,6 +4,10 @@ import com.example.clock.calendar.CalendarUtilityInterface
 
 class CalendarHelper(private val calendar: CalendarUtilityInterface) {
 
+    fun getDate() : String {
+        return calendar.getDate()
+    }
+
     fun getHour() : Int {
         return calendar.getHour()
     }

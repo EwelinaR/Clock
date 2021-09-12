@@ -35,6 +35,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initTime() {
+        val date = findViewById<TextView>(R.id.date)
+        viewModel.date.observe(this, { date.text = it })
+
         val tensOfHour = findViewById<TextView>(R.id.tens_of_hour)
         val unitsOfHour = findViewById<TextView>(R.id.units_of_hour)
         viewModel.tensOfHour.observe(this, { tensOfHour.text = it.toString() })

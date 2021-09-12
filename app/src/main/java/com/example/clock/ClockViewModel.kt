@@ -13,6 +13,7 @@ import java.util.TimerTask
 class ClockViewModel(calendarUtility: CalendarUtilityInterface = CalendarUtility()):
     ViewModel(), WeatherObserver {
 
+    val date = MutableLiveData<String>()
     val tensOfHour = MutableLiveData<Int>()
     val unitsOfHour = MutableLiveData<Int>()
     val tensOfMinute = MutableLiveData<Int>()
@@ -24,6 +25,8 @@ class ClockViewModel(calendarUtility: CalendarUtilityInterface = CalendarUtility
     val weatherIcon = MutableLiveData<String>()
 
     init {
+        date.postValue(calendar.getDate())
+
         tensOfHour.postValue(calendar.getTensOfHour())
         unitsOfHour.postValue(calendar.getUnitsOfHour())
 
@@ -75,6 +78,7 @@ class ClockViewModel(calendarUtility: CalendarUtilityInterface = CalendarUtility
             return
         }
         tensOfHour.postValue(0)
+        date.postValue(calendar.getDate())
     }
 
     private fun updateWeather() {

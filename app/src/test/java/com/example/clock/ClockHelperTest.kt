@@ -144,4 +144,17 @@ class ClockHelperTest {
         assertEquals(0, calendarHelper.getMinute())
         assertEquals(0, calendarHelper.getHour())
     }
+
+    @Test
+    fun updateToNewData() {
+        // arrange
+        val calendarMock = CalendarUtilityMock(0, 0, "first")
+        val calendarHelper = CalendarHelper(calendarMock)
+
+        // act
+        calendarMock.setDate("second")
+
+        // assert
+        assertEquals("second", calendarHelper.getDate())
+    }
 }
