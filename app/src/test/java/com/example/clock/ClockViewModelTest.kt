@@ -1,8 +1,12 @@
 package com.example.clock
 
-import com.example.clock.calendar.CalendarUtility
+import com.example.clock.calendar.CalendarExtension.getDate
+import com.example.clock.calendar.CalendarExtension.getFullDate
+import com.example.clock.calendar.CalendarInstance
 import com.example.clock.calendar.CalendarUtilityMock
 import com.example.clock.weather.Weather
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -15,11 +19,14 @@ class ClockViewModelTest {
         // arrange
         val minute = 7
         val hour = 12
-        val calendarMock = CalendarUtilityMock(hour, minute)
-        val clock = ClockViewModel(calendarMock)
+        val calendar = CalendarUtilityMock(hour, minute)
+        val calendarInstance: CalendarInstance = mock {
+            on { getCalendarInstance() } doReturn calendar
+        }
+        val clock = ClockViewModel(calendarInstance)
 
         // act
-        calendarMock.setMinute(minute + 1)
+        calendar.setMinute(minute + 1)
         clock.updateTime()
         val actualMinute = clock.tensOfMinute.value!! * 10 + clock.unitsOfMinute.value!!
         val actualHour = clock.tensOfHour.value!! * 10 + clock.unitsOfHour.value!!
@@ -29,17 +36,19 @@ class ClockViewModelTest {
         Assertions.assertEquals(hour, actualHour)
     }
 
-
     @Test
     fun increaseTensOfMinute() {
         // arrange
         val hour = 8
         val minute = 19
-        val calendarMock = CalendarUtilityMock(hour, minute)
-        val clock = ClockViewModel(calendarMock)
+        val calendar = CalendarUtilityMock(hour, minute)
+        val calendarInstance: CalendarInstance = mock {
+            on { getCalendarInstance() } doReturn calendar
+        }
+        val clock = ClockViewModel(calendarInstance)
 
         // act
-        calendarMock.setMinute(minute + 1)
+        calendar.setMinute(minute + 1)
         clock.updateTime()
         val actualMinute = clock.tensOfMinute.value!! * 10 + clock.unitsOfMinute.value!!
         val actualHour = clock.tensOfHour.value!! * 10 + clock.unitsOfHour.value!!
@@ -54,12 +63,15 @@ class ClockViewModelTest {
         // arrange
         val hour = 12
         val minute = 59
-        val calendarMock = CalendarUtilityMock(hour, minute)
-        val clock = ClockViewModel(calendarMock)
+        val calendar = CalendarUtilityMock(hour, minute)
+        val calendarInstance: CalendarInstance = mock {
+            on { getCalendarInstance() } doReturn calendar
+        }
+        val clock = ClockViewModel(calendarInstance)
 
         // act
-        calendarMock.setMinute(0)
-        calendarMock.setHour(hour + 1)
+        calendar.setMinute(0)
+        calendar.setHour(hour + 1)
         clock.updateTime()
         val actualMinute = clock.tensOfMinute.value!! * 10 + clock.unitsOfMinute.value!!
         val actualHour = clock.tensOfHour.value!! * 10 + clock.unitsOfHour.value!!
@@ -74,12 +86,15 @@ class ClockViewModelTest {
         // arrange
         val hour = 9
         val minute = 59
-        val calendarMock = CalendarUtilityMock(hour, minute)
-        val clock = ClockViewModel(calendarMock)
+        val calendar = CalendarUtilityMock(hour, minute)
+        val calendarInstance: CalendarInstance = mock {
+            on { getCalendarInstance() } doReturn calendar
+        }
+        val clock = ClockViewModel(calendarInstance)
 
         // act
-        calendarMock.setMinute(0)
-        calendarMock.setHour(hour + 1)
+        calendar.setMinute(0)
+        calendar.setHour(hour + 1)
         clock.updateTime()
         val actualMinute = clock.tensOfMinute.value!! * 10 + clock.unitsOfMinute.value!!
         val actualHour = clock.tensOfHour.value!! * 10 + clock.unitsOfHour.value!!
@@ -94,12 +109,15 @@ class ClockViewModelTest {
         // arrange
         val hour = 23
         val minute = 59
-        val calendarMock = CalendarUtilityMock(hour, minute)
-        val clock = ClockViewModel(calendarMock)
+        val calendar = CalendarUtilityMock(hour, minute)
+        val calendarInstance: CalendarInstance = mock {
+            on { getCalendarInstance() } doReturn calendar
+        }
+        val clock = ClockViewModel(calendarInstance)
 
         // act
-        calendarMock.setMinute(0)
-        calendarMock.setHour(0)
+        calendar.setMinute(0)
+        calendar.setHour(0)
         clock.updateTime()
         val actualMinute = clock.tensOfMinute.value!! * 10 + clock.unitsOfMinute.value!!
         val actualHour = clock.tensOfHour.value!! * 10 + clock.unitsOfHour.value!!
@@ -112,26 +130,31 @@ class ClockViewModelTest {
     @Test
     fun updateToNewData() {
         // arrange
-        val calendarMock = CalendarUtilityMock(0, 0, "first")
-        val clock = ClockViewModel(calendarMock)
+        val calendar = CalendarUtilityMock(0, 0)
+        val calendarInstance: CalendarInstance = mock {
+            on { getCalendarInstance() } doReturn calendar
+        }
+        val clock = ClockViewModel(calendarInstance)
 
         // act
-        calendarMock.setDate("second")
         clock.updateTime()
 
         // assert
-        Assertions.assertEquals("second", clock.date.value)
+        Assertions.assertEquals(calendar.getDate(), clock.date.value)
     }
 
     @Test
     fun updateWeather() {
         // arrange
-        val calendarMock = CalendarUtilityMock(10, 10)
-        val clock = ClockViewModel(calendarMock)
+        val calendar = CalendarUtilityMock(10, 10)
+        val calendarInstance: CalendarInstance = mock {
+            on { getCalendarInstance() } doReturn calendar
+        }
+        val clock = ClockViewModel(calendarInstance)
 
         // act
         clock.updateWeatherValues(Weather(1.0f, 2.0f, "icon"))
-        val date = CalendarUtility().getFormattedFullDate()
+        val date = calendar.getFullDate()
 
         // assert
         Assertions.assertEquals(true, clock.isWeatherUpToDate.value)
@@ -141,8 +164,11 @@ class ClockViewModelTest {
     @Test
     fun failToGetWeatherInFirstTry() {
         // arrange
-        val calendarMock = CalendarUtilityMock(0, 0)
-        val clock = ClockViewModel(calendarMock)
+        val calendar = CalendarUtilityMock(0, 0)
+        val calendarInstance: CalendarInstance = mock {
+            on { getCalendarInstance() } doReturn calendar
+        }
+        val clock = ClockViewModel(calendarInstance)
 
         // act
         clock.updateWeatherValues(null)
@@ -155,13 +181,16 @@ class ClockViewModelTest {
     @Test
     fun failToGetWeatherInSecondTry() {
         // arrange
-        val calendarMock = CalendarUtilityMock(0, 0)
-        val clock = ClockViewModel(calendarMock)
+        val calendar = CalendarUtilityMock(0, 0)
+        val calendarInstance: CalendarInstance = mock {
+            on { getCalendarInstance() } doReturn calendar
+        }
+        val clock = ClockViewModel(calendarInstance)
 
         // act
         clock.updateWeatherValues(null)
         clock.updateWeatherValues(Weather(1.0f, 2.0f, "icon"))
-        val date = CalendarUtility().getFormattedFullDate()
+        val date = calendar.getFullDate()
 
         // assert
         Assertions.assertEquals(true, clock.isWeatherUpToDate.value)

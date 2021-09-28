@@ -1,26 +1,15 @@
 package com.example.clock.calendar
 
-class CalendarUtilityMock(private var hour: Int, private var minute: Int, private var date: String = ""):
-    CalendarUtilityInterface {
+import java.util.GregorianCalendar
 
-    override fun getDate() : String {
-        return  date
-    }
+class CalendarUtilityMock(private var hour: Int, private var minute: Int) : GregorianCalendar() {
 
-    override fun getHour() : Int {
-        return hour
-    }
-
-    override fun getMinute() : Int {
-        return minute
-    }
-
-    override fun getSecond() : Int {
-        return 0
-    }
-
-    fun setDate(date: String) {
-        this.date = date
+    override fun get(calendarType: Int): Int {
+        return when (calendarType) {
+            MINUTE -> minute
+            HOUR_OF_DAY -> hour
+            else -> super.get(calendarType)
+        }
     }
 
     fun setHour(hour: Int) {

@@ -35,9 +35,9 @@ class WeatherApi(private val observer: WeatherObserver) : Callback {
 
     override fun onResponse(call: Call, response: Response) {
         response.use {
-            if (!response.isSuccessful || response.body() == null)
+            if (!response.isSuccessful || response.body == null)
                 getWeatherFailed()
-            val parser = WeatherParser(response.body()!!.string())
+            val parser = WeatherParser(response.body!!.string())
             parser.getResult()?.let {
                 observer.updateWeatherValues(it)
             }
