@@ -10,7 +10,7 @@ import com.example.clock.weather.WeatherObserver
 import java.util.Timer
 import java.util.TimerTask
 
-class ClockViewModel(calendarUtility: CalendarUtilityInterface = CalendarUtility()):
+class ClockViewModel(calendarUtility : CalendarUtilityInterface = CalendarUtility()):
     ViewModel(), WeatherObserver {
 
     val date = MutableLiveData<String>()
@@ -23,6 +23,9 @@ class ClockViewModel(calendarUtility: CalendarUtilityInterface = CalendarUtility
     val temperature = MutableLiveData<Float>()
     val feelTemperature = MutableLiveData<Float>()
     val weatherIcon = MutableLiveData<String>()
+
+    var lastSyncDate: String = ""
+    val isWeatherUpToDate = MutableLiveData<Boolean>()
 
     init {
         date.postValue(calendar.getDate())
@@ -86,11 +89,13 @@ class ClockViewModel(calendarUtility: CalendarUtilityInterface = CalendarUtility
         api.getWeather()
     }
 
-    override fun updateWeatherValues(weather: Weather) {
-        weather.let {
+    override fun updateWeatherValues(weather: Weather?) {
+        weather?.let {
             temperature.postValue(it.temperature)
             feelTemperature.postValue(it.feelTemperature)
             weatherIcon.postValue(it.icon)
-        }
+            isWeatherUpToDate.postValue(true)
+            lastSyncDate = CalendarUtility().getFormattedFullDate()
+        } ?: isWeatherUpToDate.postValue(false)
     }
 }

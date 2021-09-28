@@ -9,7 +9,7 @@ import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
 
-class WeatherApi(private val observer: WeatherObserver): Callback {
+class WeatherApi(private val observer: WeatherObserver) : Callback {
 
     fun getWeather() = runBlocking {
         launch {
@@ -30,17 +30,21 @@ class WeatherApi(private val observer: WeatherObserver): Callback {
     }
 
     override fun onFailure(call: Call, e: IOException) {
-        throw e
+        getWeatherFailed()
     }
 
     override fun onResponse(call: Call, response: Response) {
         response.use {
-            if (!response.isSuccessful) throw IOException("Unexpected code $response")
-            if (response.body() == null) throw IOException("Body of response is null. $response")
+            if (!response.isSuccessful || response.body() == null)
+                getWeatherFailed()
             val parser = WeatherParser(response.body()!!.string())
             parser.getResult()?.let {
                 observer.updateWeatherValues(it)
             }
         }
+    }
+
+    private fun getWeatherFailed() {
+        observer.updateWeatherValues(null)
     }
 }

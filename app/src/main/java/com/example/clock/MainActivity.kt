@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         initTime()
         initWeather()
         initBatteryBroadcast()
+        initOutOfDateWeatherWarning()
     }
 
     private fun initScreen() {
@@ -72,17 +73,29 @@ class MainActivity : AppCompatActivity() {
     private fun initBatteryBroadcast() {
         val batteryStatus = findViewById<TextView>(R.id.battery_warning)
 
-        val broadcast = object:  BroadcastReceiver() {
+        val broadcast = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                intent!!.getIntExtra(BatteryManager.EXTRA_LEVEL, -1).let {
+                intent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)?.let {
                     batteryStatus.text = getString(R.string.battery, it.toString())
-                    if (it < 40) batteryStatus.visibility = View.VISIBLE
-                    else batteryStatus.visibility = View.INVISIBLE
+                    batteryStatus.visibility = if (it < 40) View.VISIBLE else View.INVISIBLE
                 }
             }
         }
 
         val filter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
         registerReceiver(broadcast, filter)
+    }
+
+    private fun initOutOfDateWeatherWarning() {
+        viewModel.isWeatherUpToDate.observe(this, { syncWeatherWarning(it) })
+    }
+
+    private fun syncWeatherWarning(isWeatherUpToDate: Boolean) {
+        findViewById<TextView>(R.id.last_sync_warning).apply {
+            if (viewModel.lastSyncDate.isNotEmpty()) {
+                text = getString(R.string.sync_weather, viewModel.lastSyncDate)
+            }
+            visibility = if (isWeatherUpToDate) View.INVISIBLE else View.VISIBLE
+        }
     }
 }

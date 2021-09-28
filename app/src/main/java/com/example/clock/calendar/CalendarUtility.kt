@@ -1,5 +1,6 @@
 package com.example.clock.calendar
 
+import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
@@ -29,5 +30,11 @@ class CalendarUtility : CalendarUtilityInterface {
 
     private fun getCalendarInstance() : Calendar {
         return Calendar.getInstance(TimeZone.getTimeZone("GMT+2"))
+    }
+
+    fun getFormattedFullDate() : String {
+        return SimpleDateFormat("HH:mm dd-MM-yyyy", Locale.ENGLISH).apply {
+            timeZone = TimeZone.getTimeZone("GMT+2")
+        }.format(getCalendarInstance().time)
     }
 }

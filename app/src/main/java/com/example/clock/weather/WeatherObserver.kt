@@ -1,5 +1,5 @@
 package com.example.clock.weather
 
 interface WeatherObserver {
-    fun updateWeatherValues(weather: Weather)
+    fun updateWeatherValues(weather: Weather?)
 }
