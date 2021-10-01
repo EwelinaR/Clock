@@ -7,26 +7,27 @@ import kotlin.math.roundToInt
 class WeatherParser(private val data: String) {
 
     fun getResult(): Weather? {
-        try {
-            val json = JSONObject(data)
+        return try {
+            println(data)
+             JSONObject(data).let {
+                val temp = it
+                    .getJSONObject("main")
+                    .getDouble("temp")
+                    .toFloat()
+                val fTemp = it
+                    .getJSONObject("main")
+                    .getDouble("feels_like")
+                    .toFloat()
+                val icon = it
+                    .getJSONArray("weather")
+                    .getJSONObject(0)
+                    .getString("icon")
 
-            val temp = json
-                .getJSONObject("main")
-                .getDouble("temp")
-                .toFloat()
-            val fTemp = json
-                .getJSONObject("main")
-                .getDouble("feels_like")
-                .toFloat()
-            val icon = json
-                .getJSONArray("weather")
-                .getJSONObject(0)
-                .getString("icon")
-
-            return Weather(roundFloat(temp), roundFloat(fTemp), "icon_$icon")
+                Weather(roundFloat(temp), roundFloat(fTemp), "icon_$icon")
+            }
         } catch (e: JSONException) {
             e.printStackTrace()
-            return null
+            null
         }
     }
 

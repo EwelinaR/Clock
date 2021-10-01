@@ -1,50 +1,24 @@
 package com.example.clock.weather
 
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import okhttp3.Call
-import okhttp3.Callback
+import com.example.clock.AppConstants.REQUEST_URL
+import com.example.clock.di.IoDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
-import java.io.IOException
+import javax.inject.Inject
 
-class WeatherApi(private val observer: WeatherObserver) : Callback {
+class WeatherApi @Inject constructor(private val okHttpClient: OkHttpClient,
+                                     @IoDispatcher private val dispatcher: CoroutineDispatcher) {
 
-    fun getWeather() = runBlocking {
-        launch {
-            callWeatherApi()
+    suspend fun getWeather(): Response<Weather> = withContext(dispatcher)  {
+        val request = Request.Builder().url(REQUEST_URL).build()
+
+        return@withContext try {
+            val response = okHttpClient.newCall(request).execute()
+            Response.Success(WeatherParser(response.body!!.string()).getResult()!!)
+        } catch (e: Exception) {
+            Response.Failure(e.message ?: "Unknown exception while connecting to weather API")
         }
-    }
-
-    private fun callWeatherApi() {
-        val cityId = "3099434"
-        val apiKey = "a34b12b7c0ae913e48bd719c585b30c5"
-        val request = Request
-            .Builder()
-            .url("https://api.openweathermap.org/data/2.5/weather?id=$cityId&units=metric&appid=$apiKey")
-            .build()
-
-        val client = OkHttpClient()
-        client.newCall(request).enqueue(this)
-    }
-
-    override fun onFailure(call: Call, e: IOException) {
-        getWeatherFailed()
-    }
-
-    override fun onResponse(call: Call, response: Response) {
-        response.use {
-            if (!response.isSuccessful || response.body == null)
-                getWeatherFailed()
-            val parser = WeatherParser(response.body!!.string())
-            parser.getResult()?.let {
-                observer.updateWeatherValues(it)
-            }
-        }
-    }
-
-    private fun getWeatherFailed() {
-        observer.updateWeatherValues(null)
     }
 }

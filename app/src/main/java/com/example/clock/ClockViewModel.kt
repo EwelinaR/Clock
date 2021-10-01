@@ -1,7 +1,9 @@
 package com.example.clock
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.clock.calendar.CalendarExtension.getDate
 import com.example.clock.calendar.CalendarExtension.getFullDate
 import com.example.clock.calendar.CalendarExtension.getTensOfHour
@@ -9,15 +11,17 @@ import com.example.clock.calendar.CalendarExtension.getTensOfMinute
 import com.example.clock.calendar.CalendarExtension.getUnitsOfHour
 import com.example.clock.calendar.CalendarExtension.getUnitsOfMinute
 import com.example.clock.calendar.CalendarInstance
+import com.example.clock.weather.Response
 import com.example.clock.weather.Weather
 import com.example.clock.weather.WeatherApi
-import com.example.clock.weather.WeatherObserver
+import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Timer
 import java.util.TimerTask
+import javax.inject.Inject
 
-class ClockViewModel(private var calendarInstance: CalendarInstance = CalendarInstance()) :
-    ViewModel(), WeatherObserver {
+class ClockViewModel @Inject constructor(private val calendarInstance: CalendarInstance,
+                                         private val weatherApi: WeatherApi) : ViewModel() {
 
     val date = MutableLiveData<String>()
     val tensOfHour = MutableLiveData<Int>()
@@ -48,8 +52,7 @@ class ClockViewModel(private var calendarInstance: CalendarInstance = CalendarIn
     }
 
     private fun runClock(delay: Long) {
-        val myTimer = Timer()
-        myTimer.schedule(object : TimerTask() {
+        Timer().schedule(object : TimerTask() {
             override fun run() {
                 updateTime()
             }
@@ -57,12 +60,11 @@ class ClockViewModel(private var calendarInstance: CalendarInstance = CalendarIn
     }
 
     private fun rutWeatherUpdate() {
-        val myTimer = Timer()
-        myTimer.schedule(object : TimerTask() {
+        Timer().schedule(object : TimerTask() {
             override fun run() {
                 updateWeather()
             }
-        }, 0, 60_000) // 0.5h
+        }, 0, 3_000_000) // 0.5h
     }
 
     fun updateTime() {
@@ -74,19 +76,27 @@ class ClockViewModel(private var calendarInstance: CalendarInstance = CalendarIn
         }
     }
 
-    private fun updateWeather() {
-        val api = WeatherApi(this)
-        api.getWeather()
+    internal fun updateWeather() {
+        viewModelScope.launch {
+            when (val response = weatherApi.getWeather()) {
+                is Response.Success<Weather> -> updateWeatherValues(response.data)
+                is Response.Failure<Weather> -> {
+                    isWeatherUpToDate.value = false
+                    Log.e("API", response.errorMessage)
+                }
+            }
+        }
     }
 
-    override fun updateWeatherValues(weather: Weather?) {
-        weather?.let {
-            temperature.postValue(it.temperature)
-            feelTemperature.postValue(it.feelTemperature)
-            weatherIcon.postValue(it.icon)
-            isWeatherUpToDate.postValue(true)
+    private fun updateWeatherValues(weather: Weather) {
+        weather.let {
             val calendar = calendarInstance.getCalendarInstance()
             lastSyncDate = calendar.getFullDate()
-        } ?: isWeatherUpToDate.postValue(false)
+
+            temperature.value = it.temperature
+            feelTemperature.value = it.feelTemperature
+            weatherIcon.value = it.icon
+            isWeatherUpToDate.value = true
+        }
     }
 }
