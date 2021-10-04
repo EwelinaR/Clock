@@ -5,6 +5,5 @@
     <string name="weather_icon">weather icon</string>
     <string name="celsius">°C</string>
     <string name="battery">Low battery %s%%</string>
-    <string name="no_weather">No weather data</string>
     <string name="sync_weather">Last sync: %s</string>
 </resources>

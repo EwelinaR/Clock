@@ -20,8 +20,10 @@ import java.util.Timer
 import java.util.TimerTask
 import javax.inject.Inject
 
-class ClockViewModel @Inject constructor(private val calendarInstance: CalendarInstance,
-                                         private val weatherApi: WeatherApi) : ViewModel() {
+class ClockViewModel @Inject constructor(
+    private val calendarInstance: CalendarInstance,
+    private val weatherApi: WeatherApi
+) : ViewModel() {
 
     val date = MutableLiveData<String>()
     val tensOfHour = MutableLiveData<Int>()
@@ -33,8 +35,11 @@ class ClockViewModel @Inject constructor(private val calendarInstance: CalendarI
     val feelTemperature = MutableLiveData<Float>()
     val weatherIcon = MutableLiveData<String>()
 
-    var lastSyncDate: String = ""
-    val isWeatherUpToDate = MutableLiveData<Boolean>()
+    val lastSyncDate = MutableLiveData<String>()
+    val isWeatherOutOfDate = MutableLiveData<Boolean>()
+
+    val batteryStatus = MutableLiveData<Int>()
+    val isBatteryStatusDisplayed = MutableLiveData<Boolean>()
 
     init {
         val calendar = calendarInstance.getCalendarInstance()
@@ -45,6 +50,10 @@ class ClockViewModel @Inject constructor(private val calendarInstance: CalendarI
 
         tensOfMinute.postValue(calendar.getTensOfMinute())
         unitsOfMinute.postValue(calendar.getUnitsOfMinute())
+
+        lastSyncDate.postValue("-")
+        batteryStatus.postValue(0)
+        isBatteryStatusDisplayed.postValue(false)
 
         val delay = 60_000L - calendar.get(Calendar.SECOND) * 1000
         runClock(delay)
@@ -81,7 +90,7 @@ class ClockViewModel @Inject constructor(private val calendarInstance: CalendarI
             when (val response = weatherApi.getWeather()) {
                 is Response.Success<Weather> -> updateWeatherValues(response.data)
                 is Response.Failure<Weather> -> {
-                    isWeatherUpToDate.value = false
+                    isWeatherOutOfDate.value = true
                     Log.e("API", response.errorMessage)
                 }
             }
@@ -91,12 +100,17 @@ class ClockViewModel @Inject constructor(private val calendarInstance: CalendarI
     private fun updateWeatherValues(weather: Weather) {
         weather.let {
             val calendar = calendarInstance.getCalendarInstance()
-            lastSyncDate = calendar.getFullDate()
+            lastSyncDate.value = calendar.getFullDate()
 
             temperature.value = it.temperature
             feelTemperature.value = it.feelTemperature
             weatherIcon.value = it.icon
-            isWeatherUpToDate.value = true
+            isWeatherOutOfDate.value = false
         }
+    }
+
+    fun updateBatteryStatus(battery: Int) {
+        batteryStatus.value = battery
+        isBatteryStatusDisplayed.value = battery < 40
     }
 }

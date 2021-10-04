@@ -8,7 +8,6 @@ class WeatherParser(private val data: String) {
 
     fun getResult(): Weather? {
         return try {
-            println(data)
              JSONObject(data).let {
                 val temp = it
                     .getJSONObject("main")

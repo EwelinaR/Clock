@@ -145,8 +145,8 @@ class ClockViewModelTest {
         clock.updateWeather()
 
         // assert
-        assertEquals(true, clock.isWeatherUpToDate.value)
-        assertEquals(calendar.getFullDate(), clock.lastSyncDate)
+        assertEquals(false, clock.isWeatherOutOfDate.value)
+        assertEquals(calendar.getFullDate(), clock.lastSyncDate.value)
         assertEquals(1.0f, clock.temperature.value)
         assertEquals(2.0f, clock.feelTemperature.value)
         assertEquals("icon", clock.weatherIcon.value)
@@ -167,8 +167,8 @@ class ClockViewModelTest {
         clock.updateWeather()
 
         // assert
-        assertEquals(true, clock.isWeatherUpToDate.value)
-        assertEquals(calendar.getFullDate(), clock.lastSyncDate)
+        assertEquals(false, clock.isWeatherOutOfDate.value)
+        assertEquals(calendar.getFullDate(), clock.lastSyncDate.value)
         assertEquals(10.0f, clock.temperature.value)
         assertEquals(20.0f, clock.feelTemperature.value)
         assertEquals("icon v2", clock.weatherIcon.value)
@@ -187,8 +187,8 @@ class ClockViewModelTest {
         clock.updateWeather()
 
         // assert
-        assertEquals(false, clock.isWeatherUpToDate.value)
-        assertEquals("", clock.lastSyncDate)
+        assertEquals(true, clock.isWeatherOutOfDate.value)
+        assertEquals("-", clock.lastSyncDate.value)
     }
 
     @Test
@@ -206,8 +206,8 @@ class ClockViewModelTest {
         clock.updateWeather()
 
         // assert
-        assertEquals(true, clock.isWeatherUpToDate.value)
-        assertEquals(calendar.getFullDate(), clock.lastSyncDate)
+        assertEquals(false, clock.isWeatherOutOfDate.value)
+        assertEquals(calendar.getFullDate(), clock.lastSyncDate.value)
         assertEquals(1.0f, clock.temperature.value)
         assertEquals(2.0f, clock.feelTemperature.value)
         assertEquals("icon", clock.weatherIcon.value)
@@ -228,7 +228,7 @@ class ClockViewModelTest {
         clock.updateWeather()
 
         // assert
-        assertEquals(false, clock.isWeatherUpToDate.value)
-        assertEquals(calendar.getFullDate(), clock.lastSyncDate)
+        assertEquals(true, clock.isWeatherOutOfDate.value)
+        assertEquals(calendar.getFullDate(), clock.lastSyncDate.value)
     }
 }

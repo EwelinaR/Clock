@@ -1,138 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/black"
-    tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="clockViewModel"
+            type="com.example.clock.ClockViewModel" />
+    </data>
 
-    <LinearLayout
-        android:id="@+id/time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/weatherIcon"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        tools:context=".MainActivity">
 
-        <TextView
-            android:id="@+id/tens_of_hour"
+
+        <LinearLayout
+            android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/no_digit"
-            style="@style/ClockText" />
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/weatherIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tens_of_hour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{String.valueOf(clockViewModel.tensOfHour)}"
+                style="@style/ClockText" />
+
+            <TextView
+                android:id="@+id/units_of_hour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{String.valueOf(clockViewModel.unitsOfHour)}"
+                style="@style/ClockText" />
+
+            <TextView
+                android:id="@+id/colon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/colon"
+                style="@style/ClockText" />
+
+            <TextView
+                android:id="@+id/tens_of_minute"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{String.valueOf(clockViewModel.tensOfMinute)}"
+                style="@style/ClockText" />
+
+            <TextView
+                android:id="@+id/units_of_minute"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{String.valueOf(clockViewModel.unitsOfMinute)}"
+                style="@style/ClockText" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/units_of_hour"
+            android:id="@+id/temperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/no_digit"
-            style="@style/ClockText" />
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@{String.valueOf(clockViewModel.temperature)}"
+            style="@style/TempText.Large"
+            app:layout_constraintBottom_toTopOf="@+id/feelTemperature"
+            app:layout_constraintEnd_toStartOf="@+id/temperatureSign" />
 
         <TextView
-            android:id="@+id/colon"
+            android:id="@+id/temperatureSign"
+            style="@style/TempText.Large"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/colon"
-            style="@style/ClockText" />
+            android:layout_marginBottom="8dp"
+            android:text="@string/celsius"
+            app:layout_constraintBottom_toTopOf="@+id/feelTemperatureSign"
+            app:layout_constraintEnd_toStartOf="@+id/weatherIcon" />
 
         <TextView
-            android:id="@+id/tens_of_minute"
+            android:id="@+id/feelTemperature"
+            style="@style/TempText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/no_digit"
-            style="@style/ClockText" />
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="24dp"
+            android:text="@{String.valueOf(clockViewModel.feelTemperature)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/feelTemperatureSign" />
 
         <TextView
-            android:id="@+id/units_of_minute"
+            android:id="@+id/feelTemperatureSign"
+            style="@style/TempText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/no_digit"
-            style="@style/ClockText" />
-    </LinearLayout>
+            android:layout_marginBottom="24dp"
+            android:text="@string/celsius"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/weatherIcon" />
 
-    <TextView
-        android:id="@+id/temperature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/no_digit"
-        style="@style/TempText.Large"
-        app:layout_constraintBottom_toTopOf="@+id/feelTemperature"
-        app:layout_constraintEnd_toStartOf="@+id/temperatureSign" />
+        <ImageView
+            android:id="@+id/weatherIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:iconSrc="@{clockViewModel.weatherIcon}"
+            app:layout_constraintBottom_toBottomOf="@+id/feelTemperatureSign"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/temperatureSign"
+            app:srcCompat="@drawable/no_icon"
+            android:contentDescription="@string/weather_icon" />
 
-    <TextView
-        android:id="@+id/temperatureSign"
-        style="@style/TempText.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="@string/celsius"
-        app:layout_constraintBottom_toTopOf="@+id/feelTemperatureSign"
-        app:layout_constraintEnd_toStartOf="@+id/weatherIcon" />
+        <TextView
+            android:id="@+id/date"
+            style="@style/TempText.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="24dp"
+            android:text="@{String.valueOf(clockViewModel.date)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/feelTemperature"
-        style="@style/TempText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="24dp"
-        android:text="@string/no_digit"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/feelTemperatureSign" />
+        <TextView
+            app:updateVisibility="@{clockViewModel.isBatteryStatusDisplayed}"
+            android:id="@+id/battery_warning"
+            style="@style/BatteryWarning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@{@string/battery(String.valueOf(clockViewModel.batteryStatus))}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/feelTemperatureSign"
-        style="@style/TempText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:text="@string/celsius"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/weatherIcon" />
+        <TextView
+            app:updateVisibility="@{clockViewModel.isWeatherOutOfDate}"
+            android:id="@+id/last_sync_warning"
+            style="@style/NoWeatherWarning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{@string/sync_weather(String.valueOf(clockViewModel.lastSyncDate))}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/feelTemperatureSign" />
 
-    <ImageView
-        android:id="@+id/weatherIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/feelTemperatureSign"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/temperatureSign"
-        app:srcCompat="@drawable/no_icon"
-        android:contentDescription="@string/weather_icon" />
-
-    <TextView
-        android:id="@+id/date"
-        style="@style/TempText.Medium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="24dp"
-        android:text="@string/no_digit"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/battery_warning"
-        style="@style/BatteryWarning"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/last_sync_warning"
-        style="@style/NoWeatherWarning"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/no_weather"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/feelTemperatureSign" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

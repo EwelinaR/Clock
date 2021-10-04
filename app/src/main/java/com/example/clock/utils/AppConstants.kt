@@ -1,4 +1,4 @@
-package com.example.clock
+package com.example.clock.utils
 
 object AppConstants {
     private const val CITY_ID = "3099434"

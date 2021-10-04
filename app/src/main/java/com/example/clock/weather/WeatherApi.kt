@@ -1,6 +1,6 @@
 package com.example.clock.weather
 
-import com.example.clock.AppConstants.REQUEST_URL
+import com.example.clock.utils.AppConstants.REQUEST_URL
 import com.example.clock.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
