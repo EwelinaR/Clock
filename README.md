@@ -4,4 +4,6 @@ It uses fullscreen mode and displays current time and weather (temperature and w
 
 ### Technologies / libraries
 - OkHttp
-- MVVM architecture
+- MVVM architecture (ViewModel + data binding)
+- Dagger
+- unit tests
